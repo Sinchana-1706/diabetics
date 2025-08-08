@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diabetes Predictor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #8360c3, #2ebf91);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .card {
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+        }
+
+        h2 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-floating label {
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #2ebf91;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #27a67f;
+        }
+
+        .result {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .recommendation-body h2 {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            color: #2ebf91;
+        }
+
+        .recommendation-body ul,
+        .recommendation-body ol {
+            padding-left: 1.2rem;
+        }
+
+        .recommendation-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .recommendation-body table,
+        .recommendation-body th,
+        .recommendation-body td {
+            border: 1px solid #ccc;
+        }
+
+        .recommendation-body th,
+        .recommendation-body td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .navbar-text {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded-pill px-4 mb-4">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <span class="navbar-brand d-flex align-items-center">
+            <span class="fs-4 me-2">🩺</span>
+        </span>
+
+        <div class="text-center flex-grow-1">
+            <span class="navbar-text h2 fw-bold text-dark">Diabetes Predictor</span>
+        </div>
+
+        <div class="d-flex">
+            <a class="nav-link text-primary fw-bold" href="http://127.0.0.1:5000">Home</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-4">
+    <div class="row justify-content-center g-4">
+
+        <!-- Input & Result Card -->
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="card h-100">
+                
+                <form method="post" action="/predict">
+                    {% for field in ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'] %}
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="{{ field }}" placeholder="{{ field }}" required
+                                   value="{{ values[field] if values and field in values else '' }}">
+                            <label>{{ field.replace('DiabetesPedigreeFunction', 'Diabetes Pedigree Function') }}</label>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">🔍 Check Sugar</button>
+                </form>
+
+                {% if prediction_text %}
+                    <div class="result text-center {{ prediction_class }}">
+                        {{ prediction_text }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recommendation Card -->
+        {% if recommendation %}
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="card h-100">
+                    <h5 class="text-center h3 text-primary">📝 Personalized Recommendation</h5>
+                    <div class="recommendation-body">
+                        {{ recommendation | safe }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
